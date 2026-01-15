@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Flow Demo</string>
+    <string name="title_cold">冷流 (Cold Flow) 输出</string>
+    <string name="title_hot">热流 (Hot Flow) 输出</string>
+    <string name="button_start_cold">开始冷流采集</string>
+    <string name="button_increment_state">StateFlow +1</string>
+    <string name="button_emit_event">SharedFlow 发送事件</string>
+    <string name="button_clear">清空日志</string>
+</resources>
