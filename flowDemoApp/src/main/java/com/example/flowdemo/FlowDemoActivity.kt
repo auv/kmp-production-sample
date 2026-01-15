@@ -72,10 +72,12 @@ class FlowDemoActivity : AppCompatActivity() {
             sharedFlow.tryEmit("SharedFlow 事件 @${System.currentTimeMillis()}")
         }
 
+
         channelButton.setOnClickListener {
             // Channel 发送事件，接收端用 for (item in channel) 消费。
             channel.trySend("Channel 消息 @${System.currentTimeMillis()}")
         }
+
 
         clearButton.setOnClickListener {
             coldOutput.text = ""
@@ -95,11 +97,13 @@ class FlowDemoActivity : AppCompatActivity() {
                         appendHot(event)
                     }
                 }
+
                 launch {
                     for (event in channel) {
                         appendHot(event)
                     }
                 }
+
             }
         }
     }
