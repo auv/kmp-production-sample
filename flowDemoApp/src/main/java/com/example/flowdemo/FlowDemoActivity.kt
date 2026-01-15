@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +33,10 @@ class FlowDemoActivity : AppCompatActivity() {
     // 热流示例：SharedFlow 用于一次性事件，订阅者从订阅时刻开始接收。
     private val sharedFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
 
+    // 热流示例：Channel 用于点对点的事件传递，接收端消费后不会重放。
+    // 这里使用 Buffered Channel，避免快速点击时挂起发送。
+    private val channel = Channel<String>(capacity = Channel.BUFFERED)
+
     private lateinit var coldOutput: TextView
     private lateinit var hotOutput: TextView
 
@@ -45,6 +50,7 @@ class FlowDemoActivity : AppCompatActivity() {
         val coldButton = findViewById<Button>(R.id.buttonCold)
         val stateButton = findViewById<Button>(R.id.buttonState)
         val sharedButton = findViewById<Button>(R.id.buttonShared)
+        val channelButton = findViewById<Button>(R.id.buttonChannel)
         val clearButton = findViewById<Button>(R.id.buttonClear)
 
         coldButton.setOnClickListener {
@@ -66,6 +72,13 @@ class FlowDemoActivity : AppCompatActivity() {
             sharedFlow.tryEmit("SharedFlow 事件 @${System.currentTimeMillis()}")
         }
 
+
+        channelButton.setOnClickListener {
+            // Channel 发送事件，接收端用 for (item in channel) 消费。
+            channel.trySend("Channel 消息 @${System.currentTimeMillis()}")
+        }
+
+
         clearButton.setOnClickListener {
             coldOutput.text = ""
             hotOutput.text = ""
@@ -84,6 +97,13 @@ class FlowDemoActivity : AppCompatActivity() {
                         appendHot(event)
                     }
                 }
+
+                launch {
+                    for (event in channel) {
+                        appendHot(event)
+                    }
+                }
+
             }
         }
     }
